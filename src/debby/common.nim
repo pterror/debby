@@ -147,7 +147,7 @@ proc get*[T, V](
 ): T =
   ## Gets the object by id.
   doAssert type(V) is type(t.id), "Types for id don't match"
-  let res = db.query(t, "SELECT " & elemNames(T) & " FROM " & T.tableName & " WHERE id = ?", id) ## TODO 
+  let res = db.query(t, "SELECT " & elemNames(T) & " FROM " & T.tableName & " WHERE id = ?", id)
   if res.len == 1:
     return res[0]
 
