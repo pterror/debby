@@ -147,7 +147,7 @@ proc get*[T, V](
 ): T =
   ## Gets the object by id.
   doAssert type(V) is type(t.id), "Types for id don't match"
-  let res = db.query(t, "SELECT " & elemNames(T) & " FROM " & T.tableName & " WHERE id = ?", id)
+  let res = db.query(t, "SELECT " & T.elemNames & " FROM " & T.tableName & " WHERE id = ?", id)
   if res.len == 1:
     return res[0]
 
@@ -327,7 +327,7 @@ proc innerSelect*[T: ref object](
   args: varargs[Argument, toArgument]
 ): seq[T] =
   ## Used by innerFilter to make the db.select call.
-  let statement = "SELECT " & elemNames(T) & " FROM " & T.tableName & " WHERE " & where
+  let statement = "SELECT " & T.elemNames & " FROM " & T.tableName & " WHERE " & where
   db.query(
     T,
     statement,
@@ -365,7 +365,7 @@ proc filter*[T](
   t: typedesc[T],
 ): seq[T] =
   ## Filter without a filter clause just returns everything.
-  db.query(t, ("select " & elemNames(T)  & " from " & T.tableName))
+  db.query(t, ("select " & T.elemNames  & " from " & T.tableName))
 
 proc hexNibble*(ch: char): int =
   ## Encodes a hex char.
