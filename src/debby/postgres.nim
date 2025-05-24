@@ -343,7 +343,7 @@ proc insert*[T: ref object](db: Db, obj: T) =
   ## Inserts the object into the database.
   ## Reads the ID of the inserted ref object back.
   for row in db.insertInner(obj, " RETURNING id"):
-    obj.id = row[0].parseInt()
+    obj.id = typeof(obj.id)(row[0].parseInt())
 
 proc query*[T](
   db: Db,

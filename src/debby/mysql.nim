@@ -283,7 +283,7 @@ proc insert*[T: ref object](db: Db, obj: T) =
   ## Inserts the object into the database.
   ## Reads the ID of the inserted ref object back.
   discard db.insertInner(obj)
-  obj.id = mysql_insert_id(db).int
+  obj.id = typeof(obj.id)(mysql_insert_id(db).int)
 
 proc query*[T](
   db: Db,
