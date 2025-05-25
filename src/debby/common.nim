@@ -145,8 +145,9 @@ proc toArgument*[T](v: T): Argument =
 proc get*[T, V](db: Db, t: typedesc[T], id: V): T =
   ## Gets the object by id.
   doAssert typeof(V) is typeof(t.id), "Types for id don't match"
-  let res =
-    db.query(t, "SELECT " & T.elemNames & " FROM " & T.tableName & " WHERE id = ?", id.int)
+  let res = db.query(
+    t, "SELECT " & T.elemNames & " FROM " & T.tableName & " WHERE id = ?", id.int
+  )
   if res.len == 1:
     return res[0]
 
@@ -343,7 +344,7 @@ template filter*[T: ref object](db: Db, t: typedesc[T], expression: untyped): un
 
 proc filter*[T](db: Db, t: typedesc[T]): seq[T] =
   ## Filter without a filter clause just returns everything.
-  db.query(t, ("select " & T.elemNames & " from " & T.tableName))
+  db.query(t, ("SELECT " & T.elemNames & " FROM " & T.tableName))
 
 proc hexNibble*(ch: char): int =
   ## Encodes a hex char.
