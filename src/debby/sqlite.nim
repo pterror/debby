@@ -63,33 +63,33 @@ proc sqlite3_last_insert_rowid*(db: Db): int64
 
 proc sqlType(t: typedesc): string =
   ## Converts nim type to sql type.
-  when t is string:
+  when t.distinctBase is string:
     "TEXT"
-  elif t is Bytes:
+  elif t.distinctBase is Bytes:
     "BLOB"
-  elif t is int8:
+  elif t.distinctBase is int8:
     "INTEGER"
-  elif t is uint8:
+  elif t.distinctBase is uint8:
     "INTEGER"
-  elif t is int16:
+  elif t.distinctBase is int16:
     "INTEGER"
-  elif t is uint16:
+  elif t.distinctBase is uint16:
     "INTEGER"
-  elif t is int32:
+  elif t.distinctBase is int32:
     "INTEGER"
-  elif t is uint32:
+  elif t.distinctBase is uint32:
     "INTEGER"
-  elif t is int or t is int64:
+  elif t.distinctBase is int or t.distinctBase is int64:
     "INTEGER"
-  elif t is uint or t is uint64:
+  elif t.distinctBase is uint or t.distinctBase is uint64:
     "TEXT"
-  elif t is float or t is float32:
+  elif t.distinctBase is float or t.distinctBase is float32:
     "REAL"
-  elif t is float64:
+  elif t.distinctBase is float64:
     "REAL"
-  elif t is bool:
+  elif t.distinctBase is bool:
     "INTEGER"
-  elif t is enum:
+  elif t.distinctBase is enum:
     "TEXT"
   else:
     "TEXT"
@@ -194,7 +194,7 @@ proc createTableStatement*[T: ref object](db: Db, t: typedesc[T]): string =
     result.add sqlType(type(field))
     if name == "id":
       result.add " PRIMARY KEY"
-      if type(field) is int:
+      if type(field.distinctBase) is int:
         result.add " AUTOINCREMENT"
     result.add ",\n"
   result.removeSuffix(",\n")

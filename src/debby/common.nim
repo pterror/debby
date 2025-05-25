@@ -184,7 +184,7 @@ proc insertInner*[T: ref object](db: Db, obj: T, extra = ""): seq[Row] =
 
   query.add "INSERT INTO " & T.tableName & " (\n"
   for name, field in obj[].fieldPairs:
-    if name == "id" and typeof(distinctBase(field)) is int:
+    if name == "id" and typeof(field.distinctBase) is int:
       discard
     else:
       query.add "  " & name.toSnakeCase & ",\n"
