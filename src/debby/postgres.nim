@@ -90,6 +90,10 @@ proc PQfname*(
   field_num: int32
 ): cstring
 
+proc PQcmdTuples*(
+  res: Result
+): cstring
+
 {.pop.}
 
 proc dbError*(db: DB) {.noreturn.} =
@@ -338,6 +342,10 @@ WHERE
   if issues.len != 0:
     issues.add "Or compile --d:debbyYOLO to do this automatically"
     raise newException(DBError, issues.join("\n"))
+
+proc changes*(db: Db): int =
+  # TODO: PQcmdTuples requires a result object, not a db bejct
+  return 0
 
 proc insert*[T: ref object](db: Db, obj: T) =
   ## Inserts the object into the database.

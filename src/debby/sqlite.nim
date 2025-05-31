@@ -59,6 +59,8 @@ proc sqlite3_column_name*(stmt: Statement, iCol: int32): cstring
 
 proc sqlite3_last_insert_rowid*(db: Db): int64
 
+proc sqlite3_changes64*(db: Db): int64
+
 {.pop.}
 
 proc sqlType(t: typedesc): string =
@@ -252,6 +254,9 @@ proc checkTable*[T: ref object](db: Db, t: typedesc[T]) =
   if issues.len != 0:
     issues.add "Or compile --d:debbyYOLO to do this automatically"
     raise newException(DBError, issues.join("\n"))
+
+proc changes*(db: Db): int =
+  return db.sqlite3_changes64().int
 
 proc insert*[T: ref object](db: Db, obj: T) =
   ## Inserts the object into the database.

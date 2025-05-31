@@ -167,14 +167,16 @@ proc update*[T: ref object](db: Db, obj: T) =
   values.add toArgument(obj[].id.int)
   db.query(query, values)
 
-proc delete*[T: ref object](db: Db, obj: T) =
+proc delete*[T: ref object](db: Db, obj: T): int =
   ## Deletes the row that corresponds to the object from the data
   ## base. Makes sure the obj.id is set.
   db.query("DELETE FROM " & T.tableName & " WHERE id = ?;", obj.id.int)
+  return db.changes()
 
-proc delete*[T: int | distinct int](db: Db, id: T) =
+proc delete*[T: int | distinct int](db: Db, id: T): int =
   ## Deletes the row with the given id.
   db.query("DELETE FROM " & T.tableName & " WHERE id = ?;", id.int)
+  return db.changes()
 
 proc insertInner*[T: ref object](db: Db, obj: T, extra = ""): seq[Row] =
   ## Inserts the object into the database.
@@ -210,15 +212,15 @@ template insert*[T: ref object](db: Db, objs: seq[T]) =
   for obj in objs:
     db.insert(obj)
 
-template delete*[T: ref object](db: Db, objs: seq[T]) =
+template delete*[T: ref object](db: Db, objs: seq[T]): int =
   ## Deletes a seq of objects from the database.
   for obj in objs:
-    db.delete(obj)
+    result += db.delete(obj)
 
-template delete*[T: int | distinct int](db: Db, objs: seq[T]) =
+template delete*[T: int | distinct int](db: Db, objs: seq[T]): int =
   ## Deletes a seq of ids from the database.
   for id in ids:
-    db.delete(id.int)
+    result += db.delete(id.int)
 
 template update*[T: ref object](db: Db, objs: seq[T]) =
   ## Updates a seq of objects into the database.

@@ -53,6 +53,8 @@ proc mysql_insert_id*(MySQL: DB): uint64
 
 proc mysql_fetch_field_direct*(res: PRES, fieldnr: cuint): PFIELD
 
+proc mysql_affected_rows*(MySQL: DB): uint64
+
 {.pop.}
 
 proc dbError*(db: Db) {.noreturn.} =
@@ -278,6 +280,9 @@ proc checkTable*[T: ref object](db: Db, t: typedesc[T]) =
   if issues.len != 0:
     issues.add "Or compile --d:debbyYOLO to do this automatically"
     raise newException(DBError, issues.join("\n"))
+
+proc changes*(db: Db): int =
+  return db.mysql_affected_rows().int
 
 proc insert*[T: ref object](db: Db, obj: T) =
   ## Inserts the object into the database.
