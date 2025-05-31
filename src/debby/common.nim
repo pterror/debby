@@ -58,7 +58,7 @@ proc validateObj*[T: ref object](t: typedesc[T]) =
   for name, field in tmp[].fieldPairs:
     if name == "id":
       foundId = true
-      if typeof(distinctBase(field)) isNot int:
+      if typeof(field.distinctBase) isNot int:
         dbError("Table's 'id' fields must be typed as 'int' or 'distinct int'.")
 
     let fieldName = name.toSnakeCase
@@ -173,7 +173,7 @@ proc delete*[T: ref object](db: Db, obj: T): int =
   db.query("DELETE FROM " & T.tableName & " WHERE id = ?;", obj.id.int)
   return db.changes()
 
-proc delete*[T: ref object, U: int | distinct int](db: Db, t: typedesc[T], id: U): int =
+proc delete*[T: ref object, U: int | distinct](db: Db, t: typedesc[T], id: U): int =
   ## Deletes the row with the given id.
   db.query("DELETE FROM " & T.tableName & " WHERE id = ?;", id.int)
   return db.changes()
@@ -217,7 +217,7 @@ template delete*[T: ref object](db: Db, objs: seq[T]): int =
   for obj in objs:
     result += db.delete(obj)
 
-template delete*[T: ref object, U: int | distinct int](db: Db, t: typedesc[T], objs: seq[T]): int =
+template delete*[T: ref object, U: int | distinct](db: Db, t: typedesc[T], objs: seq[U]): int =
   ## Deletes a seq of ids from the database.
   for id in ids:
     result += db.delete(t, id.int)
