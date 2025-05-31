@@ -172,6 +172,10 @@ proc delete*[T: ref object](db: Db, obj: T) =
   ## base. Makes sure the obj.id is set.
   db.query("DELETE FROM " & T.tableName & " WHERE id = ?;", obj.id.int)
 
+proc delete*[T: int | distinct int](db: Db, id: T) =
+  ## Deletes the row with the given id.
+  db.query("DELETE FROM " & T.tableName & " WHERE id = ?;", id.int)
+
 proc insertInner*[T: ref object](db: Db, obj: T, extra = ""): seq[Row] =
   ## Inserts the object into the database.
   if obj.id.int != 0:
@@ -210,6 +214,11 @@ template delete*[T: ref object](db: Db, objs: seq[T]) =
   ## Deletes a seq of objects from the database.
   for obj in objs:
     db.delete(obj)
+
+template delete*[T: int | distinct int](db: Db, objs: seq[T]) =
+  ## Deletes a seq of ids from the database.
+  for id in ids:
+    db.delete(id.int)
 
 template update*[T: ref object](db: Db, objs: seq[T]) =
   ## Updates a seq of objects into the database.
